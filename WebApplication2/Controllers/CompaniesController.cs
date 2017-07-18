@@ -1,26 +1,25 @@
 ﻿using System.Net;
 using System.Web.Mvc;
-using WebApplication2.DAL;
 using WebApplication2.Models;
-using WebApplication2.Models.Repositories;
+using WebApplication2.Persistence;
 
 namespace WebApplication2.Controllers
 {
     public class CompaniesController : Controller
     {
         // private IService _companyService;
-        private readonly IRepository<Company> _companyRepo;
+        private readonly UnitOfWork _unitOfWork;
 
         public CompaniesController( /*IService companyService*/)
         {
             //      _companyService = companyService;
-            _companyRepo = new CompanyRepo(new ApplicationDbContext());
+            _unitOfWork = new UnitOfWork(new ApplicationDbContext());
         }
 
         // GET: Companies
         public ActionResult Index()
         {
-            return View(_companyRepo.GetAll());
+            return View(_unitOfWork.Companies.GetAll());
         }
 
         // GET: Companies/Details/5
@@ -31,7 +30,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Company company = _companyRepo.GetById(id);
+            Company company = _unitOfWork.Companies.GetById(id);
             if (company == null)
             {
                 return HttpNotFound();
@@ -54,8 +53,8 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                _companyRepo.Add(company);
-                _companyRepo.Save();
+                _unitOfWork.Companies.Add(company);
+                _unitOfWork.Companies.Save();
                 return RedirectToAction("Index");
             }
 
@@ -69,7 +68,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var company = _companyRepo.GetById(id);
+            var company = _unitOfWork.Companies.GetById(id);
             if (company == null)
             {
                 return HttpNotFound();
@@ -86,8 +85,8 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                _companyRepo.Update(company);
-                _companyRepo.Save();
+                _unitOfWork.Companies.Update(company);
+                _unitOfWork.Companies.Save();
                 return RedirectToAction("Index");
             }
             return View(company);
@@ -100,7 +99,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Company company = _companyRepo.GetById(id);
+            Company company = _unitOfWork.Companies.GetById(id);
             if (company == null)
             {
                 return HttpNotFound();
@@ -113,8 +112,9 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            _companyRepo.Delete(id);
-            _companyRepo.Save();
+            Company company = _unitOfWork.Companies.GetById(id);
+            _unitOfWork.Companies.Remove(company);
+            _unitOfWork.Companies.Save();
             return RedirectToAction("Index");
         }
 
@@ -122,7 +122,7 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                _companyRepo.Dispose();
+                _unitOfWork.Companies.Dispose();
             }
             base.Dispose(disposing);
         }
