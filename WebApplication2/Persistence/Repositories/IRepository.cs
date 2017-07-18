@@ -10,7 +10,6 @@ namespace WebApplication2.Persistence.Repositories
         void Add(T obj);
         void Update(T t);
         List<T> GetAll();
-        void Save();
         void Dispose();
     }
 }

@@ -40,12 +40,7 @@ namespace WebApplication2.Persistence.Repositories
         {
             return Context.Set<T>().ToList();
         }
-
-        public void Save()
-        {
-            Context.SaveChanges();
-        }
-
+    
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)

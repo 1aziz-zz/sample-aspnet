@@ -54,7 +54,7 @@ namespace WebApplication2.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.Companies.Add(company);
-                _unitOfWork.Companies.Save();
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
 
@@ -86,7 +86,7 @@ namespace WebApplication2.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.Companies.Update(company);
-                _unitOfWork.Companies.Save();
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
             return View(company);
@@ -114,7 +114,7 @@ namespace WebApplication2.Controllers
         {
             Company company = _unitOfWork.Companies.GetById(id);
             _unitOfWork.Companies.Remove(company);
-            _unitOfWork.Companies.Save();
+            _unitOfWork.Complete();
             return RedirectToAction("Index");
         }
 
