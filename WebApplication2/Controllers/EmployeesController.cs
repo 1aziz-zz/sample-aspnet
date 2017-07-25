@@ -7,11 +7,17 @@ namespace WebApplication2.Controllers
 {
     public class EmployeesController : Controller
     {
-        private UnitOfWork unitOfWork = new UnitOfWork(new ApplicationDbContext());
+        private UnitOfWork _unitOfWork;
+
+        public EmployeesController()
+        {
+            _unitOfWork = new UnitOfWork(new ApplicationDbContext());
+        }
+
         // GET: Employees
         public ActionResult Index()
         {
-            return View(unitOfWork.Employees.GetAll());
+            return View(_unitOfWork.Employees.GetAll());
         }
 
         // GET: Employees/Details/5
@@ -21,7 +27,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = unitOfWork.Employees.GetById(id);
+            Employee employee = _unitOfWork.Employees.GetById(id);
             if (employee == null)
             {
                 return HttpNotFound();
@@ -44,8 +50,8 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Employees.Add(employee);
-                unitOfWork.Complete();
+                _unitOfWork.Employees.Add(employee);
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
 
@@ -59,7 +65,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = unitOfWork.Employees.GetById(id);
+            Employee employee = _unitOfWork.Employees.GetById(id);
             if (employee == null)
             {
                 return HttpNotFound();
@@ -76,8 +82,8 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Employees.Update(employee);
-                unitOfWork.Complete();
+                _unitOfWork.Employees.Update(employee);
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
             return View(employee);
@@ -90,7 +96,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = unitOfWork.Employees.GetById(id);
+            Employee employee = _unitOfWork.Employees.GetById(id);
             if (employee == null)
             {
                 return HttpNotFound();
@@ -103,9 +109,9 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Employee employee = unitOfWork.Employees.GetById(id);
-            unitOfWork.Employees.Remove(employee);
-            unitOfWork.Complete();
+            Employee employee = _unitOfWork.Employees.GetById(id);
+            _unitOfWork.Employees.Remove(employee);
+            _unitOfWork.Complete();
             return RedirectToAction("Index");
         }
 
@@ -113,7 +119,7 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                unitOfWork.Dispose();
+                _unitOfWork.Dispose();
             }
             base.Dispose(disposing);
         }
