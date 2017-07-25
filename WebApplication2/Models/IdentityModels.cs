@@ -31,5 +31,7 @@ namespace WebApplication2.Models
         }
 
         public System.Data.Entity.DbSet<WebApplication2.Models.Company> Companies { get; set; }
+
+        public System.Data.Entity.DbSet<WebApplication2.Models.Employee> Employees { get; set; }
     }
 }
